@@ -1,6 +1,6 @@
 # simglucose-dashboard
 
-This a web app for the Type-1 Diabetes simulation engine [simglucose](https://github.com/jxx123/simglucose). This app should have the following features:
+This web app for the Type-1 Diabetes simulation engine [simglucose](https://github.com/jxx123/simglucose). This app should have the following features:
 - It is able to configure the simulation settings to run different simulation experiments.
 - Visualize the simulation in real time (time-series plot).
 - It saves the simulation data into a well-structured database for queries later, e.g. query by patient names, by time range etc.
