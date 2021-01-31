@@ -42,6 +42,13 @@ def get(patient_id):
     # return results.json()
     return results_schema.jsonify(results)
 
+@app.route('/api/results/allpatientid', methods=['GET'])
+def allPatientID():
+    all_patient_name = []
+    for result in Results.query.distinct(Results.patient_id):
+        all_patient_name.append(result.patient_id)
+    return jsonify(all_patient_name)
+
 @app.route('/api/results/', methods=['POST'])
 def post():
     patient_id = request.json['patient_id']
