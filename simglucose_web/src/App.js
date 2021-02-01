@@ -9,8 +9,9 @@ export default class App extends Component {
     this.state = {
       error: null,
       isLoaded: false,
-      items: [],
-      selectedValue: "adult#001",
+      fetchDataItems: [],
+      fetchPatientIDItems: [],
+      selectedValue: "Select a patient name",
     };
   }
 
@@ -19,6 +20,7 @@ export default class App extends Component {
   };
 
   componentDidMount() {
+    this.fetchPatientID();
     this.fetchData(this.state.selectedValue);
   }
 
@@ -31,7 +33,7 @@ export default class App extends Component {
         (result) => {
           this.setState({
             isLoaded: true,
-            items: result,
+            fetchDataItems: result,
           });
         },
         // Note: it's important to handle errors here
@@ -48,24 +50,20 @@ export default class App extends Component {
 
   fetchPatientID() {
     fetch(
-      "http://localhost:8000/api/results/allPatientID"
+      "http://localhost:8000/api/results/allpatientid"
     )
       .then((res) => res.json())
       .then(
         (result) => {
           this.setState({
-            isLoaded: true,
-            items: result,
+            fetchPatientIDItems: result,
           });
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
         // exceptions from actual bugs in components.
         (error) => {
-          this.setState({
-            isLoaded: true,
-            error,
-          });
+          return 'Error, No Patient Name Found!'
         }
       );
   }
@@ -80,13 +78,14 @@ export default class App extends Component {
     return (
       <div>
         <PatientIDDropdown
+          fetchPatientIDItems={this.state.fetchPatientIDItems}
           handleChange={this.handleChange}
           selectedValue={this.state.selectedValue}
         />
         <Chart
           error={this.state.error}
           isLoaded={this.state.isLoaded}
-          items={this.state.items}
+          items={this.state.fetchDataItems}
         />
       </div>
     );
