@@ -24,8 +24,7 @@ export default class App extends Component {
 
   fetchData(patientID) {
     fetch(
-      // "http://localhost:8000/api/results/" + escape(patientID)
-      "http://localhost:8000/api1"
+      "http://localhost:8000/api/results/" + escape(patientID)
     )
       .then((res) => res.json())
       .then(
