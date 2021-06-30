@@ -1,0 +1,61 @@
+{% extends "bootstrap/base.html"%}
+{% include "header.html" %}
+
+{% block title %}Home Page{% endblock %}
+{% block content %}
+
+<div class="container">
+    <h1 class="mx-auto">Set Simulation Parameters:</h1>
+    <form class="row g-3">
+        <div class="col-md-6">
+            <label for="inputEmail4" class="form-label">Email</label>
+            <input type="email" class="form-control" id="inputEmail4">
+        </div>
+        <div class="col-md-6">
+            <label for="inputPassword4" class="form-label">Password</label>
+            <input type="password" class="form-control" id="inputPassword4">
+        </div>
+
+    </form>
+
+    <form class="row" action="">
+        <div class="col-6">
+            <label for="1" class="form-label">1</label>
+            <input type="text" class="form-control" name="1">
+
+        </div>
+        <div class="col-6">
+            <label for="1" class="form-label">1</label>
+            <input type="text" class="form-control" name="2">
+
+        </div>
+
+    </form>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            1 of 3
+        </div>
+        <div class="col-6">
+            2 of 3 (wider)
+        </div>
+        <div class="col">
+            3 of 3
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            1 of 3
+        </div>
+        <div class="col-5">
+            2 of 3 (wider)
+        </div>
+        <div class="col">
+            3 of 3
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% include "footer.html" %}

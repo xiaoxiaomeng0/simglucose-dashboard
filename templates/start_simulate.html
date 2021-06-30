@@ -1,0 +1,138 @@
+{% include "header.html" %}
+
+
+<div class="container">
+    <h1 class="mx-auto">Set Simulation Parameters:</h1>
+    <form class="row" action="{{url_for('simulate')}}" method="POST">
+        <div class="col-md-6 mb-3 mx-auto">
+            <div class="my-3">
+                <h3 for="sim-time" class="form-label">Input Simulation Time:</h3>
+                <input type="number" class="form-control" id="sim-time" name="sim-time" min="8" max="24" step="4">
+            </div>
+            <div class="my-3">
+                <h3 class="form-text">Select Scenario:</h3>
+                <div class="form-check">
+                    <div class="row">
+                        <div class="col-6">
+                            <input type="radio" class="form-check-input" id="random-scenario" value="1" name="scenario"
+                                checked>
+                            <label for="scenario1" class="form-check-label">Random Scenario</label>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="ps-3">
+                            <label for="random-seed"> Input random seed for random scenario:</label>
+                            <input type="number" class="form-control d-inline" id="random-seed" name="random-seed">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="custom-scenario" name="scenario" value="2">
+                    <label for="scenario2" class="form-check-label">Custom Scenario</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <h3 for="">Select Virtual Patients:</h3>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="1" id="all-adolescents" name="adolescents">
+                    <label class="form-check-label" for="all-adolescents">
+                        All Adolescents
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="2" id="all-adults" name="adults" checked>
+                    <label class="form-check-label" for="all-adults">
+                        All Adults
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="3" id="all-children" name="children">
+                    <label class="form-check-label" for="all-children">
+                        All children
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="4" id="all-adolescents" name="patientID">
+                    <label for="custom-patientID"> Or by patient ID</label>
+                    <input type="text" class="form-control d-inline" id="custom-patientID" name="patientID">
+                </div>
+
+            </div>
+            <div class="mb-3">
+                <h3 class="form-text">Select Sensor Name:</h3>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="dexcom" name="sensor" value="1" checked>
+                    <label for="dexcom" class="form-check-label">Dexcom</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="guardianRT" name="sensor" value="2">
+                    <label for="guardianRT" class="form-check-label">GuardianRT</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="navigator" name="sensor" value="3">
+                    <label for="navigator" class="form-check-label">Navigator</label>
+                </div>
+                <div class="ps-3">
+                    <label for="seed-for-sensor">Input a random seed for sensor noise:</label>
+                    <input type="text" name=seed-noise id="seed-for-sensor" class="form-control">
+                </div>
+            </div>
+            <div class="mb-3">
+                <h3 class="form-text">Select Insulin Pump:</h3>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="cozmo" name="pump" value="1" checked>
+                    <label for="cozmo" class="form-check-label">Cozmo</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="insulet" name="pump" value="2">
+                    <label for="insulet" class="form-check-label">Insulet</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <h3 class="form-text">Select Controller:</h3>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="basal-bolus" name="controller" value="1" checked>
+                    <label for="basal-bolus" class="form-check-label">Basal-Bolus</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <h3 class="form-text">Saved Folder:</h3>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="default-path" name="path" value="1" checked>
+                    <label for="default-path" class="form-check-label">Default Folder</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="custom-path" name="path" value="2">
+                    <label for="custom-path" class="form-check-label">Custom Folder</label>
+                    <input type="text" class="form-control">
+                </div>
+            </div>
+            <div class="mb-3">
+                <h3 class="form-text">Animation:</h3>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="with-animation" name="animate" value="1" checked>
+                    <label for="with-animation" class="form-check-label">Yes</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="no-animation" name="animate" value="2">
+                    <label for="no-animation" class="form-check-label">No</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <h3 class="form-text">Parallel Computation:</h3>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="with-parallel" name="parallel" value="1" checked>
+                    <label for="with-parallel" class="form-check-label">Yes</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" class="form-check-input" id="no-parallel" name="parallel" value="2">
+                    <label for="no-parallel" class="form-check-label">No</label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
+
+
+{% include "footer.html" %}
