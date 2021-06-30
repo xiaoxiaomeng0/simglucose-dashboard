@@ -1,4 +1,5 @@
-from flask import Flask, render_template, url_for
+import re
+from flask import Flask, render_template, url_for, request
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 
@@ -15,6 +16,8 @@ def home():
 
 @app.route("/simulate", methods=["GET", "POST"])
 def simulate():
+    if request.method == "POST":
+        print(request.form)
     return render_template("start_simulate.html")
 
 

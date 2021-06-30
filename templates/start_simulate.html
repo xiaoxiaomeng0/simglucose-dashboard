@@ -7,7 +7,7 @@
         <div class="col-md-6 mb-3 mx-auto">
             <div class="my-3">
                 <h3 for="sim-time" class="form-label">Input Simulation Time:</h3>
-                <input type="number" class="form-control" id="sim-time" name="sim-time" min="8" max="24" step="4">
+                <input type="text" class="form-control" id="sim-time" name="sim-time">
             </div>
             <div class="my-3">
                 <h3 class="form-text">Select Scenario:</h3>
@@ -15,7 +15,7 @@
                     <div class="row">
                         <div class="col-6">
                             <input type="radio" class="form-check-input" id="random-scenario" value="1" name="scenario"
-                                checked>
+                                onclick="disableScenarioSeedBox()" checked>
                             <label for="scenario1" class="form-check-label">Random Scenario</label>
                         </div>
                     </div>
@@ -27,34 +27,40 @@
                     </div>
                 </div>
                 <div class="form-check">
-                    <input type="radio" class="form-check-input" id="custom-scenario" name="scenario" value="2">
+                    <input type="radio" class="form-check-input" id="custom-scenario" name="scenario" value="2"
+                        onclick="disableScenarioSeedBox()">
                     <label for="scenario2" class="form-check-label">Custom Scenario</label>
                 </div>
             </div>
             <div class="mb-3">
                 <h3 for="">Select Virtual Patients:</h3>
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1" id="all-adolescents" name="adolescents">
+                    <input class="form-check-input" type="checkbox" value="1" id="all-adolescents" name="adolescents"
+                        onclick="disablePatientIDBox()">
                     <label class="form-check-label" for="all-adolescents">
                         All Adolescents
                     </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="2" id="all-adults" name="adults" checked>
+                    <input class="form-check-input" type="checkbox" value="2" id="all-adults" name="adults" checked
+                        onclick="disablePatientIDBox()">
                     <label class="form-check-label" for="all-adults">
                         All Adults
                     </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="3" id="all-children" name="children">
+                    <input class="form-check-input" type="checkbox" value="3" id="all-children" name="children"
+                        onclick="disablePatientIDBox()">
                     <label class="form-check-label" for="all-children">
                         All children
                     </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="4" id="all-adolescents" name="patientID">
-                    <label for="custom-patientID"> Or by patient ID</label>
-                    <input type="text" class="form-control d-inline" id="custom-patientID" name="patientID">
+                    <input class="form-check-input" type="checkbox" value="4" id="custom-patientID-chkbox"
+                        name="patientID" onclick="disablePatientIDBox()">
+                    <label for="custom-patientID-chkbox"> Or by patient ID</label>
+                    <input type="text" class="form-control d-inline" id="custom-patientID-input" name="patientID"
+                        disabled="disabled">
                 </div>
 
             </div>
@@ -98,13 +104,16 @@
             <div class="mb-3">
                 <h3 class="form-text">Saved Folder:</h3>
                 <div class="form-check">
-                    <input type="radio" class="form-check-input" id="default-path" name="path" value="1" checked>
+                    <input type="radio" class="form-check-input" id="default-path" name="path" value="1" checked
+                        onclick="disablePathBox()">
                     <label for="default-path" class="form-check-label">Default Folder</label>
                 </div>
                 <div class="form-check">
-                    <input type="radio" class="form-check-input" id="custom-path" name="path" value="2">
-                    <label for="custom-path" class="form-check-label">Custom Folder</label>
-                    <input type="text" class="form-control">
+                    <input type="radio" class="form-check-input" id="custom-path-radio" name="path" value="2"
+                        onclick="disablePathBox()">
+                    <label for="custom-path-radio" class="form-check-label">Custom Folder</label>
+                    <input type="text" class="form-control" id="custom-path-input" name="custom-path-input"
+                        disabled="disabled">
                 </div>
             </div>
             <div class="mb-3">
@@ -135,4 +144,5 @@
 </div>
 
 
+<script src="{{ url_for('static', filename='js/simulate_form.js' ) }}"></script>
 {% include "footer.html" %}
