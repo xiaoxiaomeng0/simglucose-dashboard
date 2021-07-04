@@ -1,35 +1,90 @@
-function disableScenarioSeedBox() {
-    const random_scenario = document.getElementById("random-scenario");
-    const txt_random_seed = document.getElementById("random-seed");
-    txt_random_seed.disabled = random_scenario.checked ? false : true;
-    if (!txt_random_seed.disabled) {
-        txt_random_seed.focus();
-    }
+// add start-hour time options
+
+// const option_head = document.createElement("option");
+// const option_head_text = document.createTextNode("Select start time");
+// const option_head_selected = document.createAttribute("selected");
+// option_head.appendChild(option_head_text);
+// option_head.setAttributeNode(option_head_selected);
+
+const select_time_element = document.getElementById("start-time-hour");
+// select_time_element.appendChild(option_head_text);
+for (let i = 1; i <= 12; i++) {
+  const option = document.createElement("option");
+  const option_text = document.createTextNode(`${i}:00`);
+  const option_text_value = document.createAttribute("value");
+  option_text_value.value = `${i}:00`;
+  option.appendChild(option_text);
+  option.setAttributeNode(option_text_value);
+  select_time_element.appendChild(option);
 }
-function disablePatientIDBox() {
-    const custom_patientID_chkbox = document.getElementById("custom-patientID-chkbox");
-    const custom_patientID_input = document.getElementById("custom-patientID-input");
-    const all_adolescents = document.getElementById("all-adolescents")
-    const all_adults = document.getElementById("all-adults")
-    const all_children = document.getElementById("all-children")
-    custom_patientID_input.disabled = custom_patientID_chkbox.checked ? false : true;
-    if (!custom_patientID_input.disabled) {
-        custom_patientID_input.focus();
-        all_adolescents.disabled = true
-        all_adults.disabled = true
-        all_children.disabled = true
-    } else {
-        all_adolescents.disabled = false
-        all_adults.disabled = false
-        all_children.disabled = false
+
+const select_period_element = document.getElementById("start-time-period");
+// select_period_element.appendChild(option_head_text);
+const period_list = ["AM", "PM"];
+for (let item of period_list) {
+  const option = document.createElement("option");
+  const option_text = document.createTextNode(item);
+  const option_text_value = document.createAttribute("value");
+  option_text_value.value = item;
+  option.appendChild(option_text);
+  option.setAttributeNode(option_text_value);
+  select_period_element.appendChild(option);
+}
+
+function hideCustomScenario() {
+  const random_seed_div = document.querySelector(".random-scenario-seed");
+  const custom_scenario_chkbox = document.getElementById(
+    "custom-scenario-chkbox"
+  );
+  const custom_scenario_detail = document.getElementsByClassName(
+    "custom-scenario-detail"
+  );
+  if (custom_scenario_chkbox.checked) {
+    for (let item of custom_scenario_detail) {
+      console.log(item);
+      item.style.display = "flex";
+      random_seed_div.style.display = "none";
     }
+  } else {
+    for (let item of custom_scenario_detail) {
+      item.style.display = "none";
+      random_seed_div.style.display = "block";
+    }
+  }
+}
+
+function disablePatientIDBox() {
+  const custom_patientID_chkbox = document.getElementById(
+    "custom-patientID-chkbox"
+  );
+  const custom_patientID_div_chkbox =
+    document.getElementsByClassName("custom-patientID");
+
+  const all_adolescents = document.getElementById("all-adolescents");
+  const all_adults = document.getElementById("all-adults");
+  const all_children = document.getElementById("all-children");
+  if (custom_patientID_chkbox.checked) {
+    for (let item of custom_patientID_div_chkbox) {
+      item.style.display = "block";
+    }
+    all_adolescents.disabled = true;
+    all_adults.disabled = true;
+    all_children.disabled = true;
+  } else {
+    for (let item of custom_patientID_div_chkbox) {
+      item.style.display = "none";
+    }
+    all_adolescents.disabled = false;
+    all_adults.disabled = false;
+    all_children.disabled = false;
+  }
 }
 
 function disablePathBox() {
-    const custom_path_radio = document.getElementById("custom-path-radio");
-    const custom_path_input= document.getElementById("custom-path-input");
-    custom_path_input.disabled = custom_path_radio.checked ? false : true;
-    if (custom_path_input.disabled) {
-        custom_path_input.focus();
-    }
+  const custom_path_radio = document.getElementById("custom-path-radio");
+  const custom_path_input = document.getElementById("custom-path-input");
+  custom_path_input.disabled = custom_path_radio.checked ? false : true;
+  if (custom_path_input.disabled) {
+    custom_path_input.focus();
+  }
 }

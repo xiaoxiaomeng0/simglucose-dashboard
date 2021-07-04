@@ -4,32 +4,77 @@
 <div class="container">
     <h1 class="mx-auto">Set Simulation Parameters:</h1>
     <form class="row" action="{{url_for('simulate')}}" method="POST">
-        <div class="col-md-6 mb-3 mx-auto">
+        <div class="col-md-8 mb-3 mx-auto">
             <div class="my-3">
                 <h3 for="sim-time" class="form-label">Input Simulation Time:</h3>
                 <input type="text" class="form-control" id="sim-time" name="sim-time">
             </div>
             <div class="my-3">
                 <h3 class="form-text">Select Scenario:</h3>
+                <div class="row">
+                    <label for="start-hour" class="col-sm-6 col-form-label">Start time of the day to initiate the
+                        simulation</label>
+
+                    <select name="start-hour" id="start-time-hour" class="form-select col-sm-2">
+                    </select>
+                    <select name="start-period" id="start-time-period" class="form-select col-sm-2">
+                    </select>
+
+
+                </div>
                 <div class="form-check">
                     <div class="row">
                         <div class="col-6">
                             <input type="radio" class="form-check-input" id="random-scenario" value="1" name="scenario"
-                                onclick="disableScenarioSeedBox()" checked>
-                            <label for="scenario1" class="form-check-label">Random Scenario</label>
+                                onclick="hideCustomScenario()" checked>
+                            <label for="random-scenario" class="form-check-label">Random Scenario</label>
                         </div>
                     </div>
                     <div>
-                        <div class="ps-3">
+                        <div class="ps-3 random-scenario-seed">
                             <label for="random-seed"> Input random seed for random scenario:</label>
-                            <input type="number" class="form-control d-inline" id="random-seed" name="random-seed">
+                            <input type="number" class="form-control" id="random-seed" name="random-seed">
                         </div>
                     </div>
                 </div>
                 <div class="form-check">
-                    <input type="radio" class="form-check-input" id="custom-scenario" name="scenario" value="2"
-                        onclick="disableScenarioSeedBox()">
-                    <label for="scenario2" class="form-check-label">Custom Scenario</label>
+                    <input type="radio" class="form-check-input" id="custom-scenario-chkbox" name="scenario" value="2"
+                        onclick="hideCustomScenario()">
+                    <label for="custom-scenario-chkbox" class="form-check-label">Custom Scenario</label>
+                    <div class="form-row custom-scenario-detail" style="display: none">
+                        <div class="col-md-6">
+                            <label for="breakfast-time" class="col-form-label">Breakfast Time (hr)</label>
+                            <input type="text" class="form-control" id="breakfast-time" name="breakfast-time">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="breakfast-size" class="col-form-label">Breakfast Size (g)</label>
+                            <input type="text" class="form-control" id="breakfast-size" name="breakfast-size">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lunch-time" class="col-form-label">Lunch Time (hr)</label>
+                            <input type="text" class="form-control" id="lunch-time" name="lunch-time">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lunch-size" class="col-form-label">Lunch Size (g)</label>
+                            <input type="text" class="form-control" id="lunch-size" name="lunch-size">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="dinner-time" class="col-form-label">Dinner Time (hr)</label>
+                            <input type="text" class="form-control" id="dinner-time" name="dinner-time">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="dinner-size" class="col-form-label">Dinner Size (g)</label>
+                            <input type="text" class="form-control" id="dinner-size" name="dinner-size">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="snack-time" class="col-form-label">Snack Time (hr)</label>
+                            <input type="text" class="form-control" id="snack-time" name="snack-time">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="snack-size" class="col-form-label">Snack Size (g)</label>
+                            <input type="text" class="form-control" id="snack-size" name="snack-size">
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="mb-3">
@@ -59,23 +104,33 @@
                     <input class="form-check-input" type="checkbox" value="4" id="custom-patientID-chkbox"
                         name="patientID" onclick="disablePatientIDBox()">
                     <label for="custom-patientID-chkbox"> Or by patient ID</label>
-                    <input type="text" class="form-control d-inline" id="custom-patientID-input" name="patientID"
-                        disabled="disabled">
+                    <div class="row custom-patientID" style="display: none">
+                        {% for p_name in patient_names %}
+                        <div class="form-check form-check-inline col-md-4 col-lg-3 col-xl-2 ">
+                            <input type="checkbox" class="form-check-input" id="{{p_name}}" name="{{p_name}}"
+                                value="{{p_name}}">
+                            <label for="{{p_name}}" class="form-check-label">{{p_name}}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- <input type="text" class="form-control d-inline" id="custom-patientID-input" name="patientID"
+                        disabled="disabled"> -->
                 </div>
 
             </div>
             <div class="mb-3">
                 <h3 class="form-text">Select Sensor Name:</h3>
                 <div class="form-check">
-                    <input type="radio" class="form-check-input" id="dexcom" name="sensor" value="1" checked>
+                    <input type="radio" class="form-check-input" id="dexcom" name="sensor" value="Dexcom" checked>
                     <label for="dexcom" class="form-check-label">Dexcom</label>
                 </div>
                 <div class="form-check">
-                    <input type="radio" class="form-check-input" id="guardianRT" name="sensor" value="2">
+                    <input type="radio" class="form-check-input" id="guardianRT" name="sensor" value="GuardianRT">
                     <label for="guardianRT" class="form-check-label">GuardianRT</label>
                 </div>
                 <div class="form-check">
-                    <input type="radio" class="form-check-input" id="navigator" name="sensor" value="3">
+                    <input type="radio" class="form-check-input" id="navigator" name="sensor" value="Navigator">
                     <label for="navigator" class="form-check-label">Navigator</label>
                 </div>
                 <div class="ps-3">
@@ -86,30 +141,31 @@
             <div class="mb-3">
                 <h3 class="form-text">Select Insulin Pump:</h3>
                 <div class="form-check">
-                    <input type="radio" class="form-check-input" id="cozmo" name="pump" value="1" checked>
+                    <input type="radio" class="form-check-input" id="cozmo" name="pump" value="Cozmo" checked>
                     <label for="cozmo" class="form-check-label">Cozmo</label>
                 </div>
                 <div class="form-check">
-                    <input type="radio" class="form-check-input" id="insulet" name="pump" value="2">
+                    <input type="radio" class="form-check-input" id="insulet" name="pump" value="Insulet">
                     <label for="insulet" class="form-check-label">Insulet</label>
                 </div>
             </div>
             <div class="mb-3">
                 <h3 class="form-text">Select Controller:</h3>
                 <div class="form-check">
-                    <input type="radio" class="form-check-input" id="basal-bolus" name="controller" value="1" checked>
+                    <input type="radio" class="form-check-input" id="basal-bolus" name="controller" value="basal-bolus"
+                        checked>
                     <label for="basal-bolus" class="form-check-label">Basal-Bolus</label>
                 </div>
             </div>
             <div class="mb-3">
                 <h3 class="form-text">Saved Folder:</h3>
                 <div class="form-check">
-                    <input type="radio" class="form-check-input" id="default-path" name="path" value="1" checked
+                    <input type="radio" class="form-check-input" id="default-path" name="path" value="default" checked
                         onclick="disablePathBox()">
                     <label for="default-path" class="form-check-label">Default Folder</label>
                 </div>
                 <div class="form-check">
-                    <input type="radio" class="form-check-input" id="custom-path-radio" name="path" value="2"
+                    <input type="radio" class="form-check-input" id="custom-path-radio" name="path" value="custom"
                         onclick="disablePathBox()">
                     <label for="custom-path-radio" class="form-check-label">Custom Folder</label>
                     <input type="text" class="form-control" id="custom-path-input" name="custom-path-input"
@@ -119,22 +175,24 @@
             <div class="mb-3">
                 <h3 class="form-text">Animation:</h3>
                 <div class="form-check form-check-inline">
-                    <input type="radio" class="form-check-input" id="with-animation" name="animate" value="1" checked>
+                    <input type="radio" class="form-check-input" id="with-animation" name="animate" value="True"
+                        checked>
                     <label for="with-animation" class="form-check-label">Yes</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input type="radio" class="form-check-input" id="no-animation" name="animate" value="2">
+                    <input type="radio" class="form-check-input" id="no-animation" name="animate" value="False">
                     <label for="no-animation" class="form-check-label">No</label>
                 </div>
             </div>
             <div class="mb-3">
                 <h3 class="form-text">Parallel Computation:</h3>
                 <div class="form-check form-check-inline">
-                    <input type="radio" class="form-check-input" id="with-parallel" name="parallel" value="1" checked>
+                    <input type="radio" class="form-check-input" id="with-parallel" name="parallel" value="True"
+                        checked>
                     <label for="with-parallel" class="form-check-label">Yes</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input type="radio" class="form-check-input" id="no-parallel" name="parallel" value="2">
+                    <input type="radio" class="form-check-input" id="no-parallel" name="parallel" value="False">
                     <label for="no-parallel" class="form-check-label">No</label>
                 </div>
             </div>
@@ -144,5 +202,5 @@
 </div>
 
 
-<script src="{{ url_for('static', filename='js/simulate_form.js' ) }}"></script>
+<script src="{{ url_for('static', filename='js/simulate_form.js') }}"></script>
 {% include "footer.html" %}
