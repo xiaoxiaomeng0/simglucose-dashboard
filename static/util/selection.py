@@ -85,7 +85,7 @@ def select_path():
 
 def select_controller():
     controller = request.form["controller"]
-    if controller == "Basal-Bolus":
+    if controller == "basal-bolus":
         controller = BBController()
     return controller
 

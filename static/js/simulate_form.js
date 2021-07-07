@@ -1,13 +1,11 @@
-// add start-hour time options
-
-// const option_head = document.createElement("option");
-// const option_head_text = document.createTextNode("Select start time");
-// const option_head_selected = document.createAttribute("selected");
-// option_head.appendChild(option_head_text);
-// option_head.setAttributeNode(option_head_selected);
+const option_head = document.createElement("option");
+const option_head_text = document.createTextNode("Select start time");
+const option_head_selected = document.createAttribute("selected");
+option_head.appendChild(option_head_text);
+option_head.setAttributeNode(option_head_selected);
 
 const select_time_element = document.getElementById("start-time-hour");
-// select_time_element.appendChild(option_head_text);
+select_time_element.appendChild(option_head);
 for (let i = 1; i <= 12; i++) {
   const option = document.createElement("option");
   const option_text = document.createTextNode(`${i}:00`);
@@ -41,7 +39,6 @@ function hideCustomScenario() {
   );
   if (custom_scenario_chkbox.checked) {
     for (let item of custom_scenario_detail) {
-      console.log(item);
       item.style.display = "flex";
       random_seed_div.style.display = "none";
     }
@@ -86,5 +83,15 @@ function disablePathBox() {
   custom_path_input.disabled = custom_path_radio.checked ? false : true;
   if (custom_path_input.disabled) {
     custom_path_input.focus();
+  }
+}
+
+// disable the parallel button.
+const system_js = system;
+function disableParallelRadio() {
+  const animate_yes = document.getElementById("with-animation");
+  const parallel_yes = document.getElementById("with-parallel");
+  if (system_js == "Darwin") {
+    parallel_yes.disabled = animate_yes.checked ? true : false;
   }
 }

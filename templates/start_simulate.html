@@ -15,12 +15,10 @@
                     <label for="start-hour" class="col-sm-6 col-form-label">Start time of the day to initiate the
                         simulation</label>
 
-                    <select name="start-hour" id="start-time-hour" class="form-select col-sm-2">
+                    <select name="start-hour" id="start-time-hour" class="form-select col-sm-3">
                     </select>
                     <select name="start-period" id="start-time-period" class="form-select col-sm-2">
                     </select>
-
-
                 </div>
                 <div class="form-check">
                     <div class="row">
@@ -113,9 +111,6 @@
                         </div>
                         {% endfor %}
                     </div>
-
-                    <!-- <input type="text" class="form-control d-inline" id="custom-patientID-input" name="patientID"
-                        disabled="disabled"> -->
                 </div>
 
             </div>
@@ -175,12 +170,13 @@
             <div class="mb-3">
                 <h3 class="form-text">Animation:</h3>
                 <div class="form-check form-check-inline">
-                    <input type="radio" class="form-check-input" id="with-animation" name="animate" value="True"
-                        checked>
+                    <input type="radio" class="form-check-input" id="with-animation" name="animate" value="True" checked
+                        onclick="disableParallelRadio()">
                     <label for="with-animation" class="form-check-label">Yes</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input type="radio" class="form-check-input" id="no-animation" name="animate" value="False">
+                    <input type="radio" class="form-check-input" id="no-animation" name="animate" value="False"
+                        onclick="disableParallelRadio()">
                     <label for="no-animation" class="form-check-label">No</label>
                 </div>
             </div>
@@ -188,11 +184,11 @@
                 <h3 class="form-text">Parallel Computation:</h3>
                 <div class="form-check form-check-inline">
                     <input type="radio" class="form-check-input" id="with-parallel" name="parallel" value="True"
-                        checked>
+                        disabled>
                     <label for="with-parallel" class="form-check-label">Yes</label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input type="radio" class="form-check-input" id="no-parallel" name="parallel" value="False">
+                    <input type="radio" class="form-check-input" id="no-parallel" name="parallel" value="False" checked>
                     <label for="no-parallel" class="form-check-label">No</label>
                 </div>
             </div>
@@ -201,6 +197,11 @@
     </form>
 </div>
 
-
+<script>
+    const system = {{ system| tojson }};
+</script>
 <script src="{{ url_for('static', filename='js/simulate_form.js') }}"></script>
+//
+<!-- <script>let system = myFunc({{ system| tojson}});</script> -->
+
 {% include "footer.html" %}
