@@ -2,7 +2,7 @@ from flask import Flask, render_template, url_for, request, redirect
 from flask_bootstrap import Bootstrap
 # from flask_sqlalchemy import SQLAlchemy
 # from static.util.catch_keyerror import catch_keyerror
-from static.util.selection import select_path, select_animate, select_parallel, select_scenario, build_env, select_controller
+from static.util.selection import select_path, select_animate, select_parallel, select_scenario, build_env, select_controller, select_patient
 from simglucose.simulation.sim_engine import SimObj, batch_sim
 from simglucose.analysis.report import report
 from datetime import timedelta
@@ -34,6 +34,7 @@ def simulate():
         scenario, start_time = select_scenario()
         controller = select_controller()
         save_path = select_path()
+        # patients = select_patient()
         animate = select_animate()
         parallel = select_parallel()
         envs = build_env(scenario, start_time)
@@ -47,7 +48,8 @@ def simulate():
 
         df = pd.concat(
             results, keys=[s.env.patient.name for s in sim_instances])
-        results, ri_per_hour, zone_stats, figs, axes = report(df, save_path)
+        print(df)
+        # report(df, save_path)
         return redirect("/")
 
     return render_template("start_simulate.html", patient_names=patient_params["Name"].values, system=platform.system())
@@ -59,4 +61,4 @@ def test():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5001)

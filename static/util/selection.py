@@ -27,6 +27,13 @@ def str2bool(s):
         raise ValueError(f"{s} cannot be converted to boolean.")
 
 
+def parsetime(s, period):
+    date = datetime.now().date()
+    s = str(date) + " " + s + period
+    datetime_object = datetime.strptime(s, "%Y-%m-%d %I:%M%p")
+    return datetime_object
+
+
 def select_scenario():
     sim_start_hour = request.form["start-hour"]
     sim_start_period = request.form["start-period"]
@@ -42,31 +49,38 @@ def select_scenario():
     scenario_select = request.form["scenario"]
     if scenario_select == "1":
         rand_scenario_seed = int(
-            request.form["random-seed"]) if request.form["random-seed"] else None
+            request.form["random-seed"])
         scenario = RandomScenario(
             start_time=start_time, seed=rand_scenario_seed)
     elif scenario_select == "2":
         scenario_tuple = []
         breakfast_time = request.form.get("breakfast-time", None)
+        breakfast_period = request.form.get("breakfast-period", None)
         breakfast_size = request.form.get("breakfast-size", None)
         if breakfast_time and breakfast_size:
             scenario_tuple.append(
-                (float(breakfast_time), float(breakfast_size)))
+                (parsetime(breakfast_time, breakfast_period), float(breakfast_size)))
 
         lunch_time = request.form.get("lunch-time", None)
+        lunch_period = request.form.get("lunch-period", None)
         lunch_size = request.form.get("lunch-size", None)
         if lunch_time and lunch_size:
-            scenario_tuple.append((float(lunch_time), float(lunch_size)))
+            scenario_tuple.append(
+                (parsetime(lunch_time, lunch_period), float(lunch_size)))
 
         dinner_time = request.form.get("dinner-time", None)
+        dinner_period = request.form.get("dinner-period", None)
         dinner_size = request.form.get("dinner-size", None)
         if dinner_time and dinner_size:
-            scenario_tuple.append((float(dinner_time), float(dinner_size)))
+            scenario_tuple.append(
+                (parsetime(dinner_time, dinner_period), float(dinner_size)))
 
         snack_time = request.form.get("snack-time", None)
+        snack_period = request.form.get("snack-period", None)
         snack_size = request.form.get("snack-size", None)
         if snack_time and snack_size:
-            scenario_tuple.append((float(snack_time), float(snack_size)))
+            scenario_tuple.append(
+                (parsetime(snack_time, snack_period), float(snack_size)))
 
         scenario = CustomScenario(
             start_time=start_time, scenario=scenario_tuple)

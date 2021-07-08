@@ -1,11 +1,11 @@
-const option_head = document.createElement("option");
-const option_head_text = document.createTextNode("Select start time");
-const option_head_selected = document.createAttribute("selected");
-option_head.appendChild(option_head_text);
-option_head.setAttributeNode(option_head_selected);
+// const option_head = document.createElement("option");
+// const option_head_text = document.createTextNode("Select start time");
+// const option_head_selected = document.createAttribute("selected");
+// option_head.appendChild(option_head_text);
+// option_head.setAttributeNode(option_head_selected);
 
 const select_time_element = document.getElementById("start-time-hour");
-select_time_element.appendChild(option_head);
+// select_time_element.appendChild(option_head);
 for (let i = 1; i <= 12; i++) {
   const option = document.createElement("option");
   const option_text = document.createTextNode(`${i}:00`);
@@ -37,15 +37,42 @@ function hideCustomScenario() {
   const custom_scenario_detail = document.getElementsByClassName(
     "custom-scenario-detail"
   );
+  const meal_time = ["breakfast", "lunch", "dinner", "snack"];
   if (custom_scenario_chkbox.checked) {
-    for (let item of custom_scenario_detail) {
-      item.style.display = "flex";
-      random_seed_div.style.display = "none";
+    random_seed_div.style.display = "none";
+    random_seed_div.disabled = true;
+    custom_scenario_detail[0].style.display = "flex";
+    console.log(meal_time.length);
+
+    for (let item of meal_time) {
+      const select_time_element = document.getElementById(`${item}-time`);
+      for (let i = 1; i <= 12; i++) {
+        const option = document.createElement("option");
+        const option_text = document.createTextNode(`${i}:00`);
+        const option_text_value = document.createAttribute("value");
+        option_text_value.value = `${i}:00`;
+        option.appendChild(option_text);
+        option.setAttributeNode(option_text_value);
+        select_time_element.appendChild(option);
+      }
+
+      const select_period_element = document.getElementById(`${item}-period`);
+      const period_list = ["AM", "PM"];
+      for (let item of period_list) {
+        const option = document.createElement("option");
+        const option_text = document.createTextNode(item);
+        const option_text_value = document.createAttribute("value");
+        option_text_value.value = item;
+        option.appendChild(option_text);
+        option.setAttributeNode(option_text_value);
+        select_period_element.appendChild(option);
+      }
     }
   } else {
     for (let item of custom_scenario_detail) {
       item.style.display = "none";
       random_seed_div.style.display = "block";
+      random_seed_div.disabled = false;
     }
   }
 }
