@@ -1,11 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow 
+from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://meng:iaoeng@localhost:5432/simglucose'
+
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
+
 
 class Results(db.Model):
     result_id = db.Column(db.Integer, primary_key=True)
@@ -27,14 +29,18 @@ class Results(db.Model):
         Patient_ID = {self.patient_id})"
 
 # Schema
+
+
 class ResultSchema(ma.Schema):
     class Meta:
-        fields = ('result_id', 'patient_id', 'time', 'bg', 'cgm',\
-            'cho', 'lbgi', 'hbgi', 'insulin', 'risk')
+        fields = ('result_id', 'patient_id', 'time', 'bg', 'cgm',
+                  'cho', 'lbgi', 'hbgi', 'insulin', 'risk')
+
 
 # Init schema
 result_schema = ResultSchema()
 results_schema = ResultSchema(many=True)
+
 
 @app.route('/api/results/<patient_id>', methods=['GET'])
 def get(patient_id):
@@ -42,12 +48,14 @@ def get(patient_id):
     # return results.json()
     return results_schema.jsonify(results)
 
+
 @app.route('/api/results/allpatientid', methods=['GET'])
 def allPatientID():
     all_patient_name = []
     for result in Results.query.distinct(Results.patient_id):
         all_patient_name.append(result.patient_id)
     return jsonify(all_patient_name)
+
 
 @app.route('/api/results/', methods=['POST'])
 def post():
@@ -61,6 +69,7 @@ def post():
     db.session.commit()
     # return results.json()
     return result_schema.jsonify(new_result)
-        
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

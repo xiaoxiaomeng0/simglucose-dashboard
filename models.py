@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from flask_bootstrap import Bootstrap
+from sqlalchemy.orm import backref
 
 app = Flask(__name__)
 try:
@@ -8,11 +10,13 @@ try:
 except:
     print("connection error")
 
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
+Bootstrap(app)
 
 
-class Results(db.Model):
+class Result(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     patient_id = db.Column(db.String, nullable=False)
     time = db.Column(db.DateTime, nullable=False)
@@ -24,12 +28,18 @@ class Results(db.Model):
     lbgi = db.Column(db.Float)
     hbgi = db.Column(db.Float)
     risk = db.Column(db.Float)
+    experiment_id = db.Column(db.Integer, db.ForeignKey(
+        "experiment.id"), nullable=False)
 
     def __repr__(self):
         return f"Results(Time = {self.time}, Patient_ID = {self.patient_id}), BG = {self.bg}, \
         CGM = {self.cgm}, CHO = {self.cho}, reward = {self.reward}\
         INSULIN = {self.insulin}, LBGI = {self.lbgi}, \
         HBGI = {self.hbgi}, RISK = {self.risk}"
+
+
+# db.session.query(Result).delete()
+# db.session.commit()
 
 # Schema
 
@@ -40,4 +50,20 @@ class ResultSchema(ma.Schema):
                   'cho', 'lbgi', 'hbgi', 'insulin', 'risk')
 
 
-# db.create_all()
+class Experiment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    experiment_name = db.Column(db.String, nullable=False)
+    time = db.Column(db.DateTime, nullable=False)
+    results = db.relationship("Result", backref="experiment", lazy=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String, nullable=False)
+    email = db.Column(db.String, nullable=False)
+    password = db.Column(db.String, nullable=False)
+    experiment = db.relationship("Experiment", backref="user", lazy=True)
+
+
+db.create_all()
