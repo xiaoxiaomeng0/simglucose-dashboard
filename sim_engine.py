@@ -1,3 +1,4 @@
+from flask import Flask, request
 from models import Result, db, app, ResultSchema
 import logging
 import time
@@ -41,7 +42,8 @@ class SimObj(object):
                                 bg=info["bg"],
                                 lbgi=info["lbgi"],
                                 hbgi=info["hbgi"],
-                                risk=info["risk"])
+                                risk=info["risk"],
+                                experiment_id=None)
             db.session.add(new_result)
             db.session.commit()
             obs, reward, done, info = self.env.step(action)

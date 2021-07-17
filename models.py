@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_bootstrap import Bootstrap
-from sqlalchemy.orm import backref
 
 app = Flask(__name__)
 try:
@@ -10,6 +9,7 @@ try:
 except:
     print("connection error")
 
+app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKRed'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
@@ -52,7 +52,7 @@ class ResultSchema(ma.Schema):
 
 class Experiment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    experiment_name = db.Column(db.String, nullable=False)
+    experiment_name = db.Column(db.String, unique=True, nullable=False)
     time = db.Column(db.DateTime, nullable=False)
     results = db.relationship("Result", backref="experiment", lazy=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
@@ -60,10 +60,10 @@ class Experiment(db.Model):
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, nullable=False)
-    email = db.Column(db.String, nullable=False)
+    username = db.Column(db.String, unique=True, nullable=False)
+    email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
     experiment = db.relationship("Experiment", backref="user", lazy=True)
 
 
-db.create_all()
+# db.create_all()
