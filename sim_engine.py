@@ -1,5 +1,5 @@
 from flask import Flask, request
-from models import Result, db, app, ResultSchema
+from models import Result, db, app, ResultSchema, Experiment
 import logging
 import time
 import os
@@ -29,8 +29,11 @@ class SimObj(object):
         self._ctrller_kwargs = None
         self.path = path
 
-    def simulate(self):
+    def simulate(self, experiment_name):
         obs, reward, done, info = self.env.reset()
+        experiment = Experiment.query.filter_by(
+            experiment_name=experiment_name).first()
+
         while self.env.time < self.env.scenario.start_time + self.sim_time:
             action = self.controller.policy(obs, reward, done, **info)
             new_result = Result(patient_id=info["patient_name"],
@@ -43,7 +46,7 @@ class SimObj(object):
                                 lbgi=info["lbgi"],
                                 hbgi=info["hbgi"],
                                 risk=info["risk"],
-                                experiment_id=None)
+                                experiment_id=experiment.id)
             db.session.add(new_result)
             db.session.commit()
             obs, reward, done, info = self.env.step(action)
@@ -53,7 +56,7 @@ class SimObj(object):
         self.controller.reset()
 
 
-def batch_sim(sim_instances, parallel=False):
+def batch_sim(sim_instances, experiment_name, parallel=False):
     tic = time.time()
     if parallel and pathos:
         with Pool() as p:
@@ -61,7 +64,7 @@ def batch_sim(sim_instances, parallel=False):
     else:
         if parallel and not pathos:
             print('Simulation is using single process even though parallel=True.')
-        results = [s.simulate() for s in sim_instances]
+        results = [s.simulate(experiment_name) for s in sim_instances]
     toc = time.time()
     print('Simulation took {} sec.'.format(toc - tic))
     return results

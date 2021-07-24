@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+    <script src="https://unpkg.com/d3@7.0.0/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/vega@5.4.0/build/vega.min.js"></script>
+    <script src="https://unpkg.com/vega-lite@4.0.0-beta.1/build/vega-lite.min.js"></script>
+    <script src="https://unpkg.com/vega-lite-api@0.1.0/build/vega-lite-api.min.js"></script>
+    <script src="https://unpkg.com/vega-tooltip@0.19.1/build/vega-tooltip.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #vg-tooltip-element {
+            font-size: 20px;
+            color: #3e3c38;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <script>
+
+        // const url = "https://gist.githubusercontent.com/xiaoxiaomeng0/83a31edc87e3864dbba8a7ccd263af71/raw/simglucose_test.csv";
+
+        // // The most regular way to parse csv data 
+        // d3.csv(url).then(text => {
+        //     console.log(d3.csvFormat(text))
+        //     // change the parsed csv data back to string format
+        // })
+
+        // The way to use async function and csvParse data 
+        // const promise = async (url) => {
+        //     const response = await fetch(url);
+        //     return await response.text();
+        // }
+        // promise(url).then(text => {
+        //     const data = d3.csvParse(text)
+        //     console.log(data)
+        // })
+
+            // the way to use .then
+        // const promise = fetch(url);
+        // promise.then((response) => (
+        //     response.text().then((text) => (console.log(text)))));
+    </script> -->
+    <script src="bundle.js"></script>
+</body>
+
+</html>

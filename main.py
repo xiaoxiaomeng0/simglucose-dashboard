@@ -1,10 +1,11 @@
 import datetime
 from flask import Flask, render_template, url_for, request, redirect, jsonify, flash
+from flask_login.utils import login_required
 # from static.util.catch_keyerror import catch_keyerror
 from static.util.selection import select_path, select_animate, select_parallel, select_scenario, build_env, select_controller, select_patient
 from sim_engine import SimObj, batch_sim
 from models import Result, db, app, ResultSchema, Experiment, User
-from flask_login import login_user, LoginManager, current_user, logout_user
+from flask_login import login_user, LoginManager, current_user, logout_user, login_required
 from forms import RegisterForm, LoginForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta, datetime
@@ -76,18 +77,26 @@ def login():
 
 
 @app.route('/logout')
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('home'))
 
 
-@app.route("/results")
+@app.route("/all_results")
 def show_all_results():
     all_results = Result.query.all()
     return results_schema.jsonify(all_results)
 
 
+@app.route("/results/<experiment_id>")
+def show_curr_experiment_results(experiment_id):
+    all_results = Result.query.filter_by(experiment_id=experiment_id).all()
+    return results_schema.jsonify(all_results)
+
+
 @app.route("/simulate", methods=["GET", "POST"])
+@login_required
 def simulate():
     if request.method == "POST":
         experiment_name = request.form["experiment-name"]
@@ -96,22 +105,21 @@ def simulate():
             experiment_name=experiment_name, time=time, user_id=current_user.id)
         db.session.add(new_experiment)
         db.session.commit()
-        print(new_experiment.id)
 
-        # sim_time = timedelta(hours=float(request.form["sim-time"]))
-        # scenario, start_time = select_scenario()
-        # controller = select_controller()
-        # save_path = select_path()
-        # animate = select_animate()
-        # parallel = select_parallel()
-        # envs = build_env(scenario, start_time)
-        # ctrllers = [copy.deepcopy(controller) for _ in range(len(envs))]
-        # sim_instances = [SimObj(e,
-        #                         c,
-        #                         sim_time,
-        #                         animate=animate,
-        #                         path=save_path) for (e, c) in zip(envs, ctrllers)]
-        # batch_sim(sim_instances, parallel=parallel)
+        sim_time = timedelta(hours=float(request.form["sim-time"]))
+        scenario, start_time = select_scenario()
+        controller = select_controller()
+        save_path = select_path()
+        animate = select_animate()
+        parallel = select_parallel()
+        envs = build_env(scenario, start_time)
+        ctrllers = [copy.deepcopy(controller) for _ in range(len(envs))]
+        sim_instances = [SimObj(e,
+                                c,
+                                sim_time,
+                                animate=animate,
+                                path=save_path) for (e, c) in zip(envs, ctrllers)]
+        batch_sim(sim_instances, experiment_name, parallel=parallel)
 
         return redirect(url_for("show_all_results"))
 
@@ -125,7 +133,7 @@ def test():
 
 @app.route("/view")
 def view_result():
-    return "None."
+    return render_template("view.html")
 
 
 if __name__ == "__main__":

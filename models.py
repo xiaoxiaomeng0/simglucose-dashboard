@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_bootstrap import Bootstrap
+from flask_login import UserMixin
+from sqlalchemy.orm.session import close_all_sessions
 
 app = Flask(__name__)
 try:
@@ -14,6 +16,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 Bootstrap(app)
+
+# close_all_sessions()
+# db.session.close_all()
+# db.drop_all()
 
 
 class Result(db.Model):
@@ -35,7 +41,7 @@ class Result(db.Model):
         return f"Results(Time = {self.time}, Patient_ID = {self.patient_id}), BG = {self.bg}, \
         CGM = {self.cgm}, CHO = {self.cho}, reward = {self.reward}\
         INSULIN = {self.insulin}, LBGI = {self.lbgi}, \
-        HBGI = {self.hbgi}, RISK = {self.risk}"
+        HBGI = {self.hbgi}, RISK = {self.risk}, experiment_id = {self.experiment_id}"
 
 
 # db.session.query(Result).delete()
@@ -47,7 +53,7 @@ class Result(db.Model):
 class ResultSchema(ma.Schema):
     class Meta:
         fields = ('result_id', 'patient_id', 'time', 'bg', 'cgm',
-                  'cho', 'lbgi', 'hbgi', 'insulin', 'risk')
+                  'cho', 'lbgi', 'hbgi', 'insulin', 'risk', "experiment_id")
 
 
 class Experiment(db.Model):
@@ -58,7 +64,7 @@ class Experiment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
