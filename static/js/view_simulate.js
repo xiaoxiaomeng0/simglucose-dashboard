@@ -52,42 +52,62 @@ const res = fetch(url)
     // register vega and vega-lite with the API
     vl.register(vega, vegaLite, options);
     // now you can use the API!
-
+    // const base = vl.markLine().encode(
+    //     vl.x().fieldT("time").title(null),
+    // )
     const bg = vl
       .markLine({
         strokeWidth: 1,
-        stroke: "red",
+        // stroke: "red",
       })
       .data(result.filter((d) => d.patient_id === "adolescent#001"))
+      .encode(
+        vl.x().fieldT("time").title(null),
+        vl.y().fieldQ(vl.repeat("layer")).scale({ zero: false }),
+        vl.color().datum(vl.repeat("layer")),
+        vl.tooltip([vl.fieldQ("bg"), vl.hours("time")])
+      )
       .width(300)
       .height(100)
+      .repeat({ layer: ["bg", "cgm"] })
       // .autosize({ type: "fit", contains: "padding" })
       //   .config(config)
-      .encode(
-        vl.x().fieldT("time").title(null),
-        vl.y().fieldQ("bg").scale({ zero: false }),
-        // vl.color().fieldO("patient_id"),
-        vl.tooltip([vl.fieldQ("bg"), vl.hours("time")])
-      );
-    const cgm = vl
-      .markLine({ strokeWidth: 1, stroke: "blue" })
-      .data(result.filter((d) => d.patient_id === "adolescent#001"))
-      .encode(
-        vl.x().fieldT("time").title(null),
-        vl.y().fieldQ("cgm").scale({ zero: false }),
-        vl.tooltip([vl.fieldQ("cgm"), vl.hours("time")])
-      );
+      //   .repeat({ column: ["bg", "cgm"] });
+      // const bg = vl
+      //   .markLine({
+      //     strokeWidth: 1,
+      //     stroke: "red",
+      //   })
+      //   .data(result.filter((d) => d.patient_id === "adolescent#001"))
+      //   .width(300)
+      //   .height(100)
+      //   // .autosize({ type: "fit", contains: "padding" })
+      //   //   .config(config)
+      //   .encode(
+      //     vl.x().fieldT("time").title(null),
+      //     vl.y().fieldQ("bg").scale({ zero: false }),
+      //     // vl.color().fieldQ("cgm"),
+      //     vl.tooltip([vl.fieldQ("bg"), vl.hours("time")])
+      //   );
+      // const cgm = vl
+      //   .markLine({ strokeWidth: 1, stroke: "blue" })
+      //   .data(result.filter((d) => d.patient_id === "adolescent#001"))
+      //   .encode(
+      //     vl.x().fieldT("time").title(null),
+      //     vl.y().fieldQ("cgm").scale({ zero: false }),
+      //     vl.tooltip([vl.fieldQ("cgm"), vl.hours("time")])
+      //   );
 
-    const hbgi = bg.encode(
-      vl.y().fieldQ("hbgi").scale({ zero: false }),
-      vl.tooltip([vl.fieldQ("hbgi"), vl.hours("time")])
-    );
-    const insulin = bg.encode(
-      vl.y().fieldQ("insulin").scale({ zero: false }),
-      vl.tooltip([vl.fieldQ("insulin"), vl.hours("time")])
-    );
+      // const hbgi = bg.encode(
+      //   vl.y().fieldQ("hbgi").scale({ zero: false }),
+      //   vl.tooltip([vl.fieldQ("hbgi"), vl.hours("time")])
+      // );
+      // const insulin = bg.encode(
+      //   vl.y().fieldQ("insulin").scale({ zero: false }),
+      //   vl.tooltip([vl.fieldQ("insulin"), vl.hours("time")])
+      // );
 
-    vl.vconcat(vl.layer(bg, cgm), hbgi, insulin)
+      // vl.vconcat(vl.layer(bg), hbgi, insulin)
       .render()
       .then((viewElement) => {
         // render returns a promise to a DOM element containing the chart
