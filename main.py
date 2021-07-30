@@ -1,6 +1,7 @@
 import datetime
 from flask import Flask, render_template, url_for, request, redirect, jsonify, flash
 from flask_login.utils import login_required
+import requests
 # from static.util.catch_keyerror import catch_keyerror
 from static.util.selection import select_path, select_animate, select_parallel, select_scenario, build_env, select_controller, select_patient
 from sim_engine import SimObj, batch_sim
@@ -89,9 +90,12 @@ def show_all_results():
     return results_schema.jsonify(all_results)
 
 
-@app.route("/results/<experiment_id>")
-def show_curr_experiment_results(experiment_id):
-    all_results = Result.query.filter_by(experiment_id=experiment_id).all()
+@app.route("/results/<experiment_name>")
+def show_curr_experiment_results(experiment_name):
+    curr_experiment = Experiment.query.filter_by(
+        experiment_name=experiment_name).first()
+    all_results = Result.query.filter_by(
+        experiment_id=curr_experiment.id).all()
     return results_schema.jsonify(all_results)
 
 
@@ -99,14 +103,15 @@ def show_curr_experiment_results(experiment_id):
 @login_required
 def simulate():
     if request.method == "POST":
-        experiment_name = request.form["experiment-name"]
+        print(request.form)
+        experiment_name = request.form["experiment_name"]
+
         time = datetime.now()
         new_experiment = Experiment(
             experiment_name=experiment_name, time=time, user_id=current_user.id)
         db.session.add(new_experiment)
         db.session.commit()
-
-        sim_time = timedelta(hours=float(request.form["sim-time"]))
+        sim_time = timedelta(hours=float(request.form["sim_time"]))
         scenario, start_time = select_scenario()
         controller = select_controller()
         save_path = select_path()
@@ -121,7 +126,7 @@ def simulate():
                                 path=save_path) for (e, c) in zip(envs, ctrllers)]
         batch_sim(sim_instances, experiment_name, parallel=parallel)
 
-        return redirect(url_for("show_all_results"))
+        return jsonify({"experiment_name": experiment_name})
 
     return render_template("start_simulate.html", patient_names=patient_params["Name"].values, system=platform.system())
 
@@ -137,4 +142,4 @@ def view_result():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5004)

@@ -1,9 +1,8 @@
 {% include "header.html" %}
 
-
 <div class="container">
     <h1 class="mx-auto">Set Simulation Parameters:</h1>
-    <form class="row" action="{{url_for('simulate')}}" method="POST">
+    <form class="row" id="simulation-form" action="{{url_for('simulate')}}" method="POST">
         <div class="col-md-8 mb-3 mx-auto">
             <div class="my-3">
                 <h3 for="experiment-name" class="form-label">Experiment Name:</h3>
@@ -15,15 +14,19 @@
                     <input type="text" class="form-control" id="sim-time" name="sim-time">
                 </div>
                 <div class="my-3">
-                    <h3 class="form-text">Select Scenario:</h3>
+                    <h3 class="form-label">Select Scenario:</h3>
                     <div class="row">
-                        <label for="start-hour" class="col-sm-6 col-form-label">Start time of the day to initiate the
+                        <label for="start-hour" class="col-sm-6 form-label">Start time of the day to initiate the
                             simulation</label>
+                        <div class="col-sm-3">
+                            <select name="start-hour" id="start-time-hour" class="form-control">
+                            </select>
+                        </div>
+                        <div class="col-sm-3">
+                            <select name="start-period" id="start-time-period" class="form-control">
+                            </select>
+                        </div>
 
-                        <select name="start-hour" id="start-time-hour" class="form-control col-sm-3">
-                        </select>
-                        <select name="start-period" id="start-time-period" class="form-control col-sm-2">
-                        </select>
                     </div>
                     <div class="form-check">
                         <div class="row">
@@ -133,8 +136,8 @@
                         <div class="row custom-patientID" style="display: none">
                             {% for p_name in patient_names %}
                             <div class="form-check form-check-inline col-md-4 col-lg-3 col-xl-2 ">
-                                <input type="checkbox" class="form-check-input" id="{{p_name}}" name="{{p_name}}"
-                                    value="{{p_name}}">
+                                <input type="checkbox" class="form-check-input custom-p-name" id="{{p_name}}"
+                                    name="{{p_name}}" value="{{p_name}}">
                                 <label for="{{p_name}}" class="form-check-label">{{p_name}}</label>
                             </div>
                             {% endfor %}
@@ -199,20 +202,19 @@
                     <h3 class="form-text">Animation:</h3>
                     <div class="form-check form-check-inline">
                         <input type="radio" class="form-check-input" id="with-animation" name="animate" value="True"
-                            checked onclick="disableParallelRadio()">
+                            onclick="disableParallelRadio()">
                         <label for="with-animation" class="form-check-label">Yes</label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input type="radio" class="form-check-input" id="no-animation" name="animate" value="False"
-                            onclick="disableParallelRadio()">
+                            checked onclick="disableParallelRadio()">
                         <label for="no-animation" class="form-check-label">No</label>
                     </div>
                 </div>
                 <div class="mb-3">
                     <h3 class="form-text">Parallel Computation:</h3>
                     <div class="form-check form-check-inline">
-                        <input type="radio" class="form-check-input" id="with-parallel" name="parallel" value="True"
-                            disabled>
+                        <input type="radio" class="form-check-input" id="with-parallel" name="parallel" value="True">
                         <label for="with-parallel" class="form-check-label">Yes</label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -221,15 +223,20 @@
                         <label for="no-parallel" class="form-check-label">No</label>
                     </div>
                 </div>
+
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
     </form>
+    <div id="view"></div>
 </div>
 
 <script>
     const system = {{ system| tojson }};
 </script>
 <script src="{{ url_for('static', filename='js/simulate_form.js') }}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='js/realtime_query.js' )}}">
+</script>
 
 <!-- <script>let system = myFunc({{ system| tojson}});</script> -->
 

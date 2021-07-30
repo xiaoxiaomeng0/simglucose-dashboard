@@ -12,6 +12,8 @@ from simglucose.simulation.env import T1DSimEnv
 from datetime import datetime, timedelta
 import os
 import copy
+import json
+import numpy
 
 
 PATIENT_PARA_FILE = pkg_resources.resource_filename(
@@ -35,8 +37,8 @@ def parsetime(s, period):
 
 
 def select_scenario():
-    sim_start_hour = request.form["start-hour"]
-    sim_start_period = request.form["start-period"]
+    sim_start_hour = request.form["start_hour"]
+    sim_start_period = request.form["start_period"]
     if sim_start_period == "AM":
         convert_time = timedelta(hours=float(sim_start_hour.split(":")[0]))
     else:
@@ -49,7 +51,7 @@ def select_scenario():
     scenario_select = request.form["scenario"]
     if scenario_select == "1":
         rand_scenario_seed = int(
-            request.form["random-seed"])
+            request.form["random_seed"])
         scenario = RandomScenario(
             start_time=start_time, seed=rand_scenario_seed)
     elif scenario_select == "2":
@@ -109,7 +111,7 @@ def select_patient():
     adolescents = request.form.get("adolescents", None)
     children = request.form.get("children", None)
     custom_patient = request.form.get("patientID", None)
-    patient_list = [adolescents, adults, children, custom_patient]
+    custom_patient = json.loads(custom_patient)
     patient_params = pd.read_csv(PATIENT_PARA_FILE)
     patients = []
     if adolescents:
@@ -120,8 +122,8 @@ def select_patient():
         patients = patient_params["Name"].values[20:30]
     if custom_patient:
         for name in patient_params["Name"].values:
-            if request.form.get(name, None) != None:
-                patients.append(request.form.get(name))
+            if custom_patient.get(name, None) != None:
+                numpy.append(patients, custom_patient.get(name))
     return patients
 
 
@@ -140,7 +142,7 @@ def select_parallel():
 def build_env(scenario, start_time):
     patient_names = select_patient()
     cgm_sensor_name = request.form["sensor"]
-    cgm_seed = int(request.form["seed-noise"])
+    cgm_seed = int(request.form["seed_noise"])
     insulin_pump_name = request.form["pump"]
 
     def local_build_env(pname):

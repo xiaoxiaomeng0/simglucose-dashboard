@@ -44,74 +44,125 @@ let config = {
     },
   },
 };
-const res = fetch(url)
-  .then((result) => result.json())
-  .then((result) => {
-    console.log(result);
+const res = async () => {
+  const result = await fetch(url);
+  return await result.json();
+};
+const upper_figures = async () => {
+  const result = await res();
+  // register vega and vega-lite with the API
+  vl.register(vega, vegaLite, options);
+  // now you can use the API!
+  // const base = vl.markLine().encode(
+  //     vl.x().fieldT("time").title(null),
+  // )
+  const data = result.filter((d) => d.patient_id === "adolescent#001");
+  const bg_cgm = vl
+    .markLine({
+      strokeWidth: 1,
+      // stroke: "red",
+    })
+    //   .data(data)
+    .encode(
+      vl.x().fieldT("time").title(null),
+      vl.y().fieldQ(vl.repeat("layer")).scale({ zero: false }),
+      vl.color().datum(vl.repeat("layer")),
+      vl.tooltip([vl.fieldQ("bg"), vl.hours("time")])
+    )
+    .width(300)
+    .height(100)
+    .repeat({ layer: ["bg", "cgm"] });
+  //
+  //   .config(config)
 
-    // register vega and vega-lite with the API
-    vl.register(vega, vegaLite, options);
-    // now you can use the API!
-    // const base = vl.markLine().encode(
-    //     vl.x().fieldT("time").title(null),
-    // )
-    const bg = vl
-      .markLine({
-        strokeWidth: 1,
-        // stroke: "red",
-      })
-      .data(result.filter((d) => d.patient_id === "adolescent#001"))
-      .encode(
-        vl.x().fieldT("time").title(null),
-        vl.y().fieldQ(vl.repeat("layer")).scale({ zero: false }),
-        vl.color().datum(vl.repeat("layer")),
-        vl.tooltip([vl.fieldQ("bg"), vl.hours("time")])
-      )
-      .width(300)
-      .height(100)
-      .repeat({ layer: ["bg", "cgm"] })
-      // .autosize({ type: "fit", contains: "padding" })
-      //   .config(config)
-      //   .repeat({ column: ["bg", "cgm"] });
-      // const bg = vl
-      //   .markLine({
-      //     strokeWidth: 1,
-      //     stroke: "red",
-      //   })
-      //   .data(result.filter((d) => d.patient_id === "adolescent#001"))
-      //   .width(300)
-      //   .height(100)
-      //   // .autosize({ type: "fit", contains: "padding" })
-      //   //   .config(config)
-      //   .encode(
-      //     vl.x().fieldT("time").title(null),
-      //     vl.y().fieldQ("bg").scale({ zero: false }),
-      //     // vl.color().fieldQ("cgm"),
-      //     vl.tooltip([vl.fieldQ("bg"), vl.hours("time")])
-      //   );
-      // const cgm = vl
-      //   .markLine({ strokeWidth: 1, stroke: "blue" })
-      //   .data(result.filter((d) => d.patient_id === "adolescent#001"))
-      //   .encode(
-      //     vl.x().fieldT("time").title(null),
-      //     vl.y().fieldQ("cgm").scale({ zero: false }),
-      //     vl.tooltip([vl.fieldQ("cgm"), vl.hours("time")])
-      //   );
+  // const bg = vl
+  //   .markLine({
+  //     strokeWidth: 1,
+  //     stroke: "red",
+  //   })
+  //   .data(result.filter((d) => d.patient_id === "adolescent#001"))
+  //   .width(300)
+  //   .height(100)
+  //   // .autosize({ type: "fit", contains: "padding" })
+  //   //   .config(config)
+  //   .encode(
+  //     vl.x().fieldT("time").title(null),
+  //     vl.y().fieldQ("bg").scale({ zero: false }),
+  //     // vl.color().fieldQ("cgm"),
+  //     vl.tooltip([vl.fieldQ("bg"), vl.hours("time")])
+  //   );
+  const cho = vl
+    .markLine({ strokeWidth: 1 })
+    //   .data(data)
+    .encode(
+      vl.x().fieldT("time").title(null),
+      vl.y().fieldQ("cho").scale({ zero: false }),
+      vl.tooltip([vl.fieldQ("cho"), vl.hours("time")])
+    )
+    .width(300)
+    .height(100);
 
-      // const hbgi = bg.encode(
-      //   vl.y().fieldQ("hbgi").scale({ zero: false }),
-      //   vl.tooltip([vl.fieldQ("hbgi"), vl.hours("time")])
-      // );
-      // const insulin = bg.encode(
-      //   vl.y().fieldQ("insulin").scale({ zero: false }),
-      //   vl.tooltip([vl.fieldQ("insulin"), vl.hours("time")])
-      // );
+  const insulin = cho.encode(
+    vl.y().fieldQ("insulin").scale({ zero: false }),
+    vl.tooltip([vl.fieldQ("insulin"), vl.hours("time")])
+  );
+  const risk_index = vl
+    .markLine({
+      strokeWidth: 1,
+      // stroke: "red",
+    })
+    .encode(
+      vl.x().fieldT("time").title(null),
+      vl.y().fieldQ(vl.repeat("layer")).scale({ zero: false }),
+      vl.color().datum(vl.repeat("layer")),
+      vl.tooltip([
+        vl.fieldQ("lbgi"),
+        vl.fieldQ("hbgi"),
+        vl.fieldQ("risk"),
+        vl.hours("time"),
+      ])
+    )
+    .width(300)
+    .height(100)
+    .repeat({ layer: ["lbgi", "hbgi", "risk"] });
+  //   const hbgi = risk_index.encode(vl.y().fieldQ("hbgi").scale({ zero: false }));
 
-      // vl.vconcat(vl.layer(bg), hbgi, insulin)
-      .render()
-      .then((viewElement) => {
-        // render returns a promise to a DOM element containing the chart
-        // viewElement.value contains the Vega View object instance
-        document.getElementById("view").appendChild(viewElement);
-      });
-  });
+  vl.vconcat(bg_cgm, cho, insulin, risk_index)
+    .data(data)
+    // .autosize({ type: "fit", contains: "padding" })
+    .render()
+    .then((viewElement) => {
+      // render returns a promise to a DOM element containing the chart
+      // viewElement.value contains the Vega View object instance
+      document.getElementById("view").appendChild(viewElement);
+    });
+};
+// const lower_figures = async () => {
+//   const result = await res();
+//   vl.register(vega, vegaLite, options);
+//   const data = result.filter((d) => d.patient_id === "adolescent#001");
+//   const risk_index = vl
+//     .markLine({
+//       strokeWidth: 1,
+//       // stroke: "red",
+//     })
+//     .encode(
+//       vl.x().fieldT("time").title(null),
+//       vl.y().fieldQ(vl.repeat("layer")).scale({ zero: false }),
+//       vl.color().datum(vl.repeat("layer")),
+//       vl.tooltip([vl.fieldQ("lbgi"), vl.fieldQ("hbgi"), vl.hours("time")])
+//     )
+//     .width(300)
+//     .height(100)
+//     .repeat({ layer: ["lbgi", "hbgi", "risk"] })
+//     .data(data)
+//     // .autosize({ contains: "padding" })
+//     .render()
+//     .then((viewElement) => {
+//       // render returns a promise to a DOM element containing the chart
+//       // viewElement.value contains the Vega View object instance
+//       document.getElementById("view").appendChild(viewElement);
+//     });
+// };
+upper_figures();
+// lower_figures();

@@ -42,7 +42,6 @@ function hideCustomScenario() {
     random_seed_div.style.display = "none";
     random_seed_div.disabled = true;
     custom_scenario_detail[0].style.display = "flex";
-    console.log(meal_time.length);
 
     for (let item of meal_time) {
       const select_time_element = document.getElementById(`${item}-time`);
@@ -122,3 +121,14 @@ function disableParallelRadio() {
     parallel_yes.disabled = animate_yes.checked ? true : false;
   }
 }
+
+// const form = document.getElementById("simulation-form");
+// const form_data = new FormData(form);
+// fetch("/simulate", {
+//   method: "POST",
+//   body: form_data,
+// })
+//   .then((response) => (data = response.text()))
+//   .then((data) => {
+//     console.log(data);
+//   });
