@@ -90,12 +90,12 @@ def show_all_results():
     return results_schema.jsonify(all_results)
 
 
-@app.route("/results/<experiment_name>")
-def show_curr_experiment_results(experiment_name):
+@app.route("/results/<experiment_name>/<patient_id>")
+def show_curr_experiment_results(experiment_name, patient_id):
     curr_experiment = Experiment.query.filter_by(
         experiment_name=experiment_name).first()
     all_results = Result.query.filter_by(
-        experiment_id=curr_experiment.id).all()
+        experiment_id=curr_experiment.id, patient_id=patient_id).all()
     return results_schema.jsonify(all_results)
 
 
@@ -105,7 +105,6 @@ def simulate():
     if request.method == "POST":
         print(request.form)
         experiment_name = request.form["experiment_name"]
-
         time = datetime.now()
         new_experiment = Experiment(
             experiment_name=experiment_name, time=time, user_id=current_user.id)
@@ -126,7 +125,7 @@ def simulate():
                                 path=save_path) for (e, c) in zip(envs, ctrllers)]
         batch_sim(sim_instances, experiment_name, parallel=parallel)
 
-        return jsonify({"experiment_name": experiment_name})
+        return jsonify({experiment_name})
 
     return render_template("start_simulate.html", patient_names=patient_params["Name"].values, system=platform.system())
 

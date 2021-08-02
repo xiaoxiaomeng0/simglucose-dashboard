@@ -24,7 +24,7 @@ const options = {
 //     // .then(result => result)
 // }
 
-const url = "http://127.0.0.1:5000/results/2";
+const url = "http://127.0.0.1:5004/results/try1";
 let config = {
   view: {
     stroke: null,
@@ -62,7 +62,7 @@ const upper_figures = async () => {
       strokeWidth: 1,
       // stroke: "red",
     })
-    //   .data(data)
+    // .data(data)
     .encode(
       vl.x().fieldT("time").title(null),
       vl.y().fieldQ(vl.repeat("layer")).scale({ zero: false }),
@@ -128,7 +128,7 @@ const upper_figures = async () => {
   //   const hbgi = risk_index.encode(vl.y().fieldQ("hbgi").scale({ zero: false }));
 
   vl.vconcat(bg_cgm, cho, insulin, risk_index)
-    .data(data)
+    // .data(data)
     // .autosize({ type: "fit", contains: "padding" })
     .render()
     .then((viewElement) => {

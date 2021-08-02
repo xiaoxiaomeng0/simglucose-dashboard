@@ -111,19 +111,18 @@ def select_patient():
     adolescents = request.form.get("adolescents", None)
     children = request.form.get("children", None)
     custom_patient = request.form.get("patientID", None)
-    custom_patient = json.loads(custom_patient)
     patient_params = pd.read_csv(PATIENT_PARA_FILE)
+    all_patient_names = list(patient_params["Name"].values)
     patients = []
     if adolescents:
-        patients = patient_params["Name"].values[0:10]
+        patients = all_patient_names[0:10]
     if adults:
-        patients = patient_params["Name"].values[10:20]
+        patients = all_patient_names[10:20]
     if children:
-        patients = patient_params["Name"].values[20:30]
+        patients = all_patient_names[20:30]
     if custom_patient:
-        for name in patient_params["Name"].values:
-            if custom_patient.get(name, None) != None:
-                numpy.append(patients, custom_patient.get(name))
+        custom_patients = json.loads(custom_patient)
+        patients.extend(custom_patients)
     return patients
 
 

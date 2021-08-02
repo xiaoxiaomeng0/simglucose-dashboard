@@ -2,14 +2,42 @@
 $("form").on("submit", function (e) {
   e.preventDefault();
   // console.log($(this).serialize());
-  let patientID = {};
+  let all_patientID = [];
   $("input.custom-p-name:checked").each(function () {
     // arrow function cannot use this.
     const patient_name = $(this).val();
-    patientID[`${patient_name}`] = patient_name;
+    all_patientID.push(patient_name);
   });
-  patientID = JSON.stringify(patientID);
+
+  custom_patientIDs = JSON.stringify(all_patientID);
+
   const experiment_name = $("input[name='experiment-name']").val();
+
+  if ($("input[name='adults']:checked").val()) {
+    for (let i = 1; i < 10; i++) {
+      console.log(all_patientID);
+      all_patientID.push(`adult#00${i}`);
+    }
+    all_patientID.push("adult#010");
+  }
+  if ($("input[name='adolescents']:checked").val()) {
+    for (let i = 1; i < 10; i++) {
+      all_patientID.push(`adolescent#00${i}`);
+    }
+    all_patientID.push("adolescent#010");
+  }
+  if ($("input[name='children']:checked").val()) {
+    for (let i = 1; i < 10; i++) {
+      all_patientID.push(`child#00${i}`);
+    }
+    all_patientID.push("child#010");
+  }
+
+  let queried_patient_name = [];
+  $.each(all_patientID, function (i, el) {
+    if ($.inArray(el, queried_patient_name) === -1)
+      queried_patient_name.push(el);
+  });
   $.ajax({
     type: "POST",
     url: "/simulate",
@@ -41,7 +69,7 @@ $("form").on("submit", function (e) {
       adults: $("input[name='adults']:checked").val(),
       adolescents: $("input[name='adolescents']:checked").val(),
       children: $("input[name='children']:checked").val(),
-      patientID,
+      patientID: custom_patientIDs,
       animate: $("input[name='animate']:checked").val(),
       parallel: $("input[name='parallel']:checked").val(),
       sensor: $("input[name='sensor']:checked").val(),
@@ -54,73 +82,51 @@ $("form").on("submit", function (e) {
     //     show_chart(data);
     //   },
   });
-  const url = `http://127.0.0.1:5004/results/${experiment_name}`;
 
-  const show_chart = (url) => {
-    const options = {
-      config: {
-        // Vega-Lite default configuration
-      },
-      init: (view) => {
-        // initialize tooltip handler
-        view.tooltip(new vegaTooltip.Handler().call);
-      },
-      view: {
-        // view constructor options
-        // remove the loader if you don't want to default to vega-datasets!
-        loader: vega.loader({
-          baseURL:
-            "https://unpkg.com/vega-datasets@2.2.0/build/vega-datasets.min.js",
-        }),
-        renderer: "svg",
-      },
-    };
+  const options = {
+    config: {
+      // Vega-Lite default configuration
+    },
+    init: (view) => {
+      // initialize tooltip handler
+      view.tooltip(new vegaTooltip.Handler().call);
+    },
+    view: {
+      // view constructor options
+      // remove the loader if you don't want to default to vega-datasets!
+      loader: vega.loader({
+        baseURL:
+          "https://unpkg.com/vega-datasets@2.2.0/build/vega-datasets.min.js",
+      }),
+      renderer: "svg",
+    },
+  };
 
-    let config = {
-      view: {
-        stroke: null,
+  let config = {
+    view: {
+      stroke: null,
+    },
+    axis: {
+      domain: false,
+      tickColor: "lightGray",
+    },
+    style: {
+      "guide-label": {
+        fontSize: 20,
+        fill: "#3e3c38",
       },
-      axis: {
-        domain: false,
-        tickColor: "lightGray",
+      "guide-title": {
+        fontSize: 30,
+        fill: "#3e3c38",
       },
-      style: {
-        "guide-label": {
-          fontSize: 20,
-          fill: "#3e3c38",
-        },
-        "guide-title": {
-          fontSize: 30,
-          fill: "#3e3c38",
-        },
-      },
-    };
-    // const res = async (url) => {
-    //   try {
-    //     const response = await fetch(url);
-    //     if (response.status === 200) {
-    //       console.log("successful.");
-    //       return await response.json();
-    //     } else {
-    //       console.log("not a 200");
-    //     }
-    //   } catch (err) {
-    //     console.log(err);
-    //   } finally {
-    //     setTimeout(res(url), 2000);
-    //   }
-    // };
-    const res = async (url) => {
-      const response = await fetch(url);
-      return await response.json();
-    };
-    const figures = async () => {
-      const result = await res(url);
-      console.log(result);
-      // register vega and vega-lite with the API
+    },
+  };
+
+  const show_chart = (url, config, options, fig_location, title) => {
+    const create_figures = (config, options) => {
       vl.register(vega, vegaLite, options);
       // now you can use the API!
-      const data = result.filter((d) => d.patient_id === "adolescent#001");
+      //   const data = result.filter((d) => d.patient_id === "adolescent#001");
       const bg_cgm = vl
         .markLine({
           strokeWidth: 1,
@@ -173,19 +179,51 @@ $("form").on("submit", function (e) {
         .height(100)
         .repeat({ layer: ["lbgi", "hbgi", "risk"] });
 
-      vl.vconcat(bg_cgm, cho, insulin, risk_index)
-        .data(data)
-        // .autosize({ type: "fit", contains: "padding" })
-        .render()
-        .then((viewElement) => {
-          // render returns a promise to a DOM element containing the chart
-          // viewElement.value contains the Vega View object instance
-          document.getElementById("view").appendChild(viewElement);
-        });
+      fig = vl.vconcat(bg_cgm, cho, insulin, risk_index);
+
+      // .data(data)
+      // .autosize({ type: "fit", contains: "padding" })
+      fig.render().then((viewElement) => {
+        // render returns a promise to a DOM element containing the chart
+        // viewElement.value contains the Vega View object instance
+        document.getElementById("view").appendChild(viewElement);
+      });
+      return fig;
     };
 
-    figures();
+    fig = create_figures(config, options);
+    console.log(fig.title);
+    var intervalId = window.setInterval(function () {
+      fetch(url)
+        .then((response) => {
+          //   console.log("got response!");
+          return response.json();
+        })
+        .then((result) => {
+          //   console.log(result);
+          fig
+            .data(result)
+            .title(title)
+            .render()
+            .then((viewElement) => {
+              // render returns a promise to a DOM element containing the chart
+              // viewElement.value contains the Vega View object instance
+              var oldViewElement =
+                document.getElementById("view").childNodes[fig_location];
+              console.log(oldViewElement);
+              document
+                .getElementById("view")
+                .replaceChild(viewElement, oldViewElement);
+            });
+        });
+    }, 500);
   };
-  // setup API options
-  show_chart(url);
+  console.log(queried_patient_name);
+  for (let i = 0; i < queried_patient_name.length; i++) {
+    let url =
+      `http://127.0.0.1:5004/results/${experiment_name}/` +
+      escape(queried_patient_name[i]);
+    console.log(url);
+    show_chart(url, config, options, i, queried_patient_name[i]);
+  }
 });
